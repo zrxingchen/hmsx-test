@@ -7,7 +7,7 @@ router_user = Blueprint('user_page',__name__)
 @router_user.route("/login")
 @router_user.route("/login",methods=["GET","POST"])
 def login():
-    return render_template('user/login.html') 
+    
     if request.method == "GET":
         return render_template('user/login.html')
 

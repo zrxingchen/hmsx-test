@@ -44,3 +44,6 @@ var user_login_ops = {
         })    
     }
 }
+$(document).ready(function(){
+    user_login_ops.init()
+})
