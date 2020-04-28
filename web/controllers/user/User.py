@@ -3,6 +3,7 @@ from flask import Blueprint,render_template,request,jsonify,make_response
 from common.models.User import User
 from common.libs.user.UserService import UserService
 import json
+from application import app
 
 
 router_user = Blueprint('user_page',__name__)
