@@ -3,15 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>管理页面</title>
-    <link rel="stylesheet" href="{{ url_for('static',filename='css/bootstrap.min.css') }}">
+    <title>管理后台</title>
+    <link rel="stylesheet" href="{{ buildStaticUrl('/bootstrap/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ buildStaticUrl('/css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static',filename='/css/bootstrap.min.css') }}">
     {% block css %} {% endblock %}
 </head>
 <body>
-
     {% block content %} {% endblock %}
-    
-    <script src="{{ url_for('static',filename='plugins/jquery-3.5.0.min.js ')}}"></script>
-    {% block js %} {% endblock %}
+
+
+<script src="{{ buildStaticUrl('/plugins/jquery-3.5.0.min.js') }}"></script>
+<script src="{{ buildStaticUrl('/js/common.js') }}"></script>
+<script src="{{ url_for('static',filename='plugins/jquery-3.5.0.min.js') }}"></script>
+{% block js %}{% endblock %}
 </body>
-</html>
+</html> 
