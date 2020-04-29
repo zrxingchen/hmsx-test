@@ -1,11 +1,10 @@
-  
 from flask import Blueprint,render_template,request,jsonify,make_response,redirect,g
 
 from common.models.User import User
 from common.libs.user.UserService import UserService
 from common.libs.UrlManager import UrlManager
 from common.libs.Helper import ops_render
-from application import app
+from application import app,db
 
 import json
 
@@ -62,11 +61,41 @@ def login():
     return response
     
 
-
-
 @router_user.route("/edit",methods=["GET","POST"])
 def edit():
-    return ops_render("/user/edit.html")
+    if request.method == "GET":
+        return ops_render("/user/edit.html")
+    # POST
+    resp = {
+        "code":200,
+        "msg":"编辑成功",
+        "data":{}
+    }
+
+    req = request.values
+    nickname = req['nickname'] if 'nickname' in req else ''
+    email = req['email'] if 'email' in req else ''
+
+    # 校检
+    if nickname is None or len(nickname) < 1:
+        resp['code'] = -1
+        resp['msg'] = "请输入符合规范的nickname"
+        return jsonify(resp)
+
+    if email is None or len(email) < 1:
+        resp['code'] = -1
+        resp['msg'] = "请输入符合规范的email"
+        return jsonify(resp)
+    
+    # 更新数据库
+    user_info = g.current_user
+    user_info.nickname = nickname
+    user_info.email = email
+
+    db.session.add(user_info)
+    db.session.commit()
+
+    return jsonify(resp)
 
 @router_user.route("/reset-pwd",methods=["GET","POST"])
 def resetPwd():
