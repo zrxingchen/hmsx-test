@@ -1,25 +1,23 @@
+  
+from flask import Blueprint,render_template,request,jsonify,make_response,redirect,g
 
-from flask import Blueprint,render_template,request,jsonify,make_response,g,redirect
 from common.models.User import User
 from common.libs.user.UserService import UserService
 from common.libs.UrlManager import UrlManager
-from common.libs.Helper import  ops_render
-import json
+from common.libs.Helper import ops_render
 from application import app
 
+import json
 
 router_user = Blueprint('user_page',__name__)
 
-
 @router_user.route("/login",methods=["GET","POST"])
 def login():
-    
     if request.method == "GET":
         if g.current_user:
             return redirect(UrlManager.buildUrl("/"))
         return ops_render('user/login.html')
-        
-
+    
     resp = {
         'code':200,
         'msg':'登录成功',
@@ -37,17 +35,13 @@ def login():
         resp['code'] = -1
         resp['msg'] = "请输入正确的密码~~~"
         return jsonify(resp)
-
-
     
     # 数据库比对
     user_info = User.query.filter_by(login_name=login_name).first()
-
     if not user_info:
         resp['code'] = -1
         resp['msg'] = "用户不存在"
         return jsonify(resp)
-    
     if user_info.status != 1:
         resp['code'] = -1
         resp['msg'] = "账号已经被禁用，请联系管理员处理"
@@ -64,8 +58,10 @@ def login():
     # name   value   过期时间
     # value包括login_name  login_pwd  login_salt uid
     response.set_cookie(app.config['AUTH_COOKIE_NAME'],'%s@%s'%(UserService.generateAuthCode(user_info),user_info.uid),60*60*24*5)
-
+    
     return response
+    
+
 
 
 @router_user.route("/edit",methods=["GET","POST"])
