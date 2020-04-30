@@ -4,10 +4,9 @@ from web.controllers.index import router_index
 from web.controllers.account.Account import router_account
 
 # 拦截器的路由
-from web.interceptos.AuthInterceptor import *
+from web.interceptors.AuthInterceptor import *
 
 # 蓝图路由
 app.register_blueprint(router_user, url_prefix='/user')
 app.register_blueprint(router_index,url_prefix="/") 
-app.register_blueprint(router_index,url_prefix="/")
 app.register_blueprint(router_account,url_prefix="/account") 
