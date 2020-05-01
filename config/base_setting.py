@@ -20,3 +20,8 @@ STATUS = {
     "1":"正常",
     "0":"已删除"
 }
+UPLOAD = {
+    'ext' :['jpg','gif','bmp','jpeg','png'],
+    'prefix_path':'\\web\\static\\upload',
+    'prefix_url':'\\static\\upload\\'
+}
