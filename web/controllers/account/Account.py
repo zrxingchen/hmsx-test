@@ -1,10 +1,11 @@
 from flask import Blueprint,request,redirect,jsonify
+from sqlalchemy import or_
 
-from common.libs.Helper import ops_render,getCurrentDate
+from common.libs.Helper import ops_render,getCurrentDate,iPagenation
 from common.libs.UrlManager import UrlManager
 from common.libs.user.UserService import UserService
 from common.models.User import User
-from application import db
+from application import db,app
 
 
 router_account = Blueprint("account_page",__name__)
@@ -12,8 +13,31 @@ router_account = Blueprint("account_page",__name__)
 @router_account.route("/index")
 def index():
     resp_data = {}
-    list = User.query.all()
+    query = User.query
+    req = request.values
+    page = int(req['p']) if ('p' in req and req['p']) else 1
+    if 'status' in req and int(req['status']) > -1:
+        query = query.filter(User.status == int(req['status']))
+    if 'mix_kw' in req:
+        rule = or_( User.nickname.ilike("%{0}%".format(req['mix_kw'])), User.mobile.ilike("%{0}%".format(req['mix_kw'])) )
+        query = query.filter(rule)
+    params = {
+        "total":query.count(),
+        "page_size":2,
+        "page":page,
+        "url":request.full_path.replace("&p={}".format(page),"")
+    }
+    pages = iPagenation(params)
+    # 当前页数据开始位置  
+    offset = (page-1) * 2
+    # 当前页数据结束位置  
+    limit = page * 2
+
+    list = query.all()[offset:limit]
+
     resp_data['list'] = list
+    resp_data['status'] = app.config['STATUS']
+    resp_data['pages'] = pages
     return ops_render("/account/index.html",resp_data)
 
 @router_account.route("/info")
@@ -120,8 +144,6 @@ def set():
     db.session.add(model_user)
     db.session.commit()     
     return jsonify(resp)
-
-
 
 
 @router_account.route("remove-or-recover",methods=['GET','POST'])
